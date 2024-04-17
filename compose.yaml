@@ -1,0 +1,57 @@
+services:
+
+  traefik:
+    image: traefik:latest
+    restart: unless-stopped
+    environment:
+      - DUCKDNS_TOKEN=$DUCKDNS_TOKEN
+      - LEGO_CA_CERTIFICATES=/stepca-certs/root_ca.crt
+      - LEGO_CA_SYSTEM_CERT_POOL=true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/traefik/config.yaml:/etc/traefik/traefik.yaml
+      - ./config/traefik/fileprovider:/opt/config/fileprovider
+      - /opt/traefik:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/volumes/linuxfestnorthwest-talk-2024_step-ca/_data/certs:/stepca-certs:ro
+    labels:
+      - traefik.enable=false
+
+  step-ca:
+    restart: unless-stopped
+    image: smallstep/step-ca
+    env_file:
+      - ./config/stepca.env
+    volumes:
+      - step-ca:/home/step
+    ports:
+      - 9000:9000
+    labels:
+      - traefik.enable=false
+
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    labels:
+      - traefik.http.routers.whoami.rule=Host(`whoami-1.${BASE_DOMAIN}`)
+      - traefik.http.routers.whoami.tls.certresolver=webExternalResolver
+
+  whoami-custom-cert:
+    image: traefik/whoami
+    restart: unless-stopped
+    labels:
+      - traefik.http.routers.whoami-my-cert.rule=Host(`whoami-2.${BASE_DOMAIN}`)
+      - traefik.http.routers.whoami-my-cert.tls.certresolver=stepCaResolver
+
+  whoami-custom-cert-mtls:
+    image: traefik/whoami
+    restart: unless-stopped
+    labels:
+      - traefik.http.routers.whoami-custom-cert-mtls.rule=Host(`whoami-3.${BASE_DOMAIN}`)
+      - traefik.http.routers.whoami-custom-cert-mtls.tls.certresolver=stepCaResolver
+      - traefik.http.routers.whoami-custom-cert-mtls.tls.options=mtls@file
+
+volumes:
+  step-ca:

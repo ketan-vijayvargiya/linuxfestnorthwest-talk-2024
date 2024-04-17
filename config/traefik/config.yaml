@@ -1,0 +1,32 @@
+entryPoints:
+  web-external:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: ":443"
+  websecure-external:
+    address: ":443"
+
+log: {}
+accessLog: {}
+
+providers:
+  docker: {}
+  file:
+    directory: /opt/config/fileprovider
+
+certificatesResolvers:
+  webExternalResolver:
+    acme:
+      email: foo@bar.com
+      storage: /data/acme.json
+      dnsChallenge:
+        provider: duckdns
+
+  stepCaResolver:
+    acme:
+      caServer: https://step-ca:9000/acme/acme/directory
+      email: foo@bar.com
+      storage: /data/step-ca-resolver.json
+      tlsChallenge: {}
