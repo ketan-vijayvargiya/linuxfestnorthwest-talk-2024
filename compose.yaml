@@ -31,19 +31,26 @@ services:
     labels:
       - traefik.enable=false
 
-  whoami:
+  whoami-self-signed-certs:
     image: traefik/whoami
     restart: unless-stopped
     labels:
-      - traefik.http.routers.whoami.rule=Host(`whoami-1.${BASE_DOMAIN}`)
-      - traefik.http.routers.whoami.tls.certresolver=webExternalResolver
+      - traefik.http.routers.whoami-self-signed-certs.rule=Host(`whoami-0.${BASE_DOMAIN}`)
+      - traefik.http.routers.whoami-self-signed-certs.tls=
+
+  whoami-public-ca:
+    image: traefik/whoami
+    restart: unless-stopped
+    labels:
+      - traefik.http.routers.whoami-public-ca.rule=Host(`whoami-1.${BASE_DOMAIN}`)
+      - traefik.http.routers.whoami-public-ca.tls.certresolver=webExternalResolver
 
   whoami-custom-cert:
     image: traefik/whoami
     restart: unless-stopped
     labels:
-      - traefik.http.routers.whoami-my-cert.rule=Host(`whoami-2.${BASE_DOMAIN}`)
-      - traefik.http.routers.whoami-my-cert.tls.certresolver=stepCaResolver
+      - traefik.http.routers.whoami-custom-cert.rule=Host(`whoami-2.${BASE_DOMAIN}`)
+      - traefik.http.routers.whoami-custom-cert.tls.certresolver=stepCaResolver
 
   whoami-custom-cert-mtls:
     image: traefik/whoami
