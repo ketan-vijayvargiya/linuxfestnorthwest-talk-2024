@@ -1,6 +1,6 @@
 # linuxfestnorthwest-talk-2024
 
-This repository contains the code behidn my talk, _TLS in the homelab: the easy way and the hard way_, from _LinuxFest Northwest 2024_. More details [here](https://ketanvijayvargiya.com/2-tls-in-the-homelab-the-easy-way-and-the-hard-way/).
+This repository contains the code behind my talk, _TLS in the homelab: the easy way and the hard way_, from _LinuxFest Northwest 2024_. More details [here](https://ketanvijayvargiya.com/2-tls-in-the-homelab-the-easy-way-and-the-hard-way/).
 
 ## Instructions
 
